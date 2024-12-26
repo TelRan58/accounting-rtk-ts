@@ -1,6 +1,8 @@
 import {useState} from "react";
-import {useAppDispatch} from "../../app/hooks.ts";
-import {changePassword} from "../../features/api/accountApi.ts";
+import {useAppDispatch, useAppSelector} from "../../app/hooks.ts";
+import {useChangePasswordMutation, useFetchUserQuery} from "../../features/api/accountApi.ts";
+import {createToken} from "../../utils/constants.ts";
+import {setToken} from "../../features/slices/tokenSlice.ts";
 
 interface Props {
     close: () => void;
@@ -11,6 +13,9 @@ const ChangePassword = ({close}: Props) => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const dispatch = useAppDispatch();
+    const [changePassword, {isSuccess}] = useChangePasswordMutation();
+    const token = useAppSelector(state => state.token);
+    const {data} = useFetchUserQuery(token);
 
     const handleClickClear = () => {
         setNewPassword('');
@@ -18,10 +23,14 @@ const ChangePassword = ({close}: Props) => {
         setOldPassword('');
     }
 
+    if(isSuccess) {
+        dispatch(setToken(createToken(data!.login, newPassword)));
+    }
+
     const handleClickSave = () => {
 
         if (confirmPassword === newPassword) {
-            dispatch(changePassword([newPassword, oldPassword]));
+            changePassword([newPassword, createToken(data!.login, oldPassword)]);
         } else {
             alert('new password and confirm new password are different');
         }

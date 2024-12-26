@@ -1,6 +1,5 @@
 import {useState} from "react";
-import {useAppDispatch} from "../../app/hooks.ts";
-import {updateUser} from "../../features/api/accountApi.ts";
+import {useUpdateUserMutation} from "../../features/api/accountApi.ts";
 
 interface Props {
     close: () => void;
@@ -9,7 +8,7 @@ interface Props {
 const EditProfile = ({close}: Props) => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const dispatch = useAppDispatch();
+    const [updateUser] = useUpdateUserMutation()
 
     const handleClickClear = () => {
         setFirstName('');
@@ -17,7 +16,7 @@ const EditProfile = ({close}: Props) => {
     }
 
     const handleClickSave = () => {
-        dispatch(updateUser({firstName, lastName}));
+        updateUser({firstName, lastName});
         close();
     }
 

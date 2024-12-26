@@ -1,14 +1,22 @@
 import {useAppSelector} from "../../app/hooks.ts";
+import {useFetchUserQuery} from "../../features/api/accountApi.ts";
 
 const ProfileData = () => {
-    const {firstName, lastName, login, roles} = useAppSelector(state => state.user);
+    const token = useAppSelector(state => state.token);
+    const {data, isLoading} = useFetchUserQuery(token);
+    if (isLoading) {
+        return <p>Loading...</p>;
+    }
+    if (!data) {
+        return <p>No data available</p>;
+    }
     return (
         <div>
-            <p>First name: {firstName}</p>
-            <p>Last name: {lastName}</p>
-            <p>Login: {login}</p>
+            <p>First name: {data.firstName}</p>
+            <p>Last name: {data.lastName}</p>
+            <p>Login: {data.login}</p>
             <ul>
-                {roles.map(role => <li key={role}>{role}</li>)}
+                {data.roles.map(role => <li key={role}>{role}</li>)}
             </ul>
         </div>
     );
