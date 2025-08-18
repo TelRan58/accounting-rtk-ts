@@ -19,7 +19,7 @@ export const accountApi = createApi({
     endpoints: builder => ({
         registerUser: builder.mutation<UserProfile, UserRegister>({
             query: (user: UserRegister) => ({
-                url: '/user',
+                url: '/register',
                 method: 'POST',
                 body: user
             })
@@ -34,18 +34,18 @@ export const accountApi = createApi({
             }),
             providesTags: ['profile'],
         }),
-        updateUser: builder.mutation<UserProfile, UserData>({
-            query: (user: UserData) => ({
-                url: '/user',
-                method: 'PUT',
+        updateUser: builder.mutation<UserProfile, {user: UserData, login: string}>({
+            query: ({user, login}) => ({
+                url: `/user/${login}`,
+                method: 'PATCH',
                 body: user
             }),
             invalidatesTags: ['profile']
         }),
         changePassword: builder.mutation<void, string[]>({
             query: (credentials) => ({
-                url: '/user/password',
-                method: 'PUT',
+                url: '/password',
+                method: 'PATCH',
                 headers: {
                     Authorization: `Basic ${credentials[1]}`,
                     'X-Password': credentials[0]
